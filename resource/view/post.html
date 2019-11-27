@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>REST</title>
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script SRC="../js/jquery.validate.min.js"></script>
+    <script src="../js/validate.js"></script>
+</head>
+<style type="text/css">
+    form.cmxform label.error,
+    label.error {
+        color: red;
+    }
+</style>
+
+<body>
+    <h1>JSON12POST</h1>
+    <form>
+        ID：<input type="text" name="id"><br>
+        名前：<input type="text" name="name"><br>
+        性別：<input type="radio" name="gender" value="male">男
+        <input type="radio" name="gender" value="famale">女
+        <label id="radio_error"></label><br>
+    </form>
+    <button>POST</button>
+
+    <hr>
+
+    <p>JSON.parse前：</p>
+    <div id="before"></div>
+
+    <hr>
+
+    <p>JSON.parse後：</p>
+    <div id="after"></div>
+</body>
+<script>
+
+    $("button").click(function () {
+        if (!$('form').valid()) {
+            this.preventDefault();
+        }
+        console.log("valid status: " + $('form').valid());
+        $("#after").empty();
+        $("#before").empty();
+
+        var user_data = {};
+        user_data.ID = $('input[name="id"]').val();
+        user_data.name = $('input[name="name"]').val();
+        user_data.gender = $('input[name="gender"]:checked').val();
+        send_data = JSON.stringify(user_data);
+        $.ajax({
+            url: "../../json12",
+            type: "POST",
+            data: send_data,
+            contentType: "Content-Type: application/json; charset=UTF-8",
+        })
+            .done(function (msg, status, xhr) {
+                console.log("success");
+                console.log("msg = " + msg);
+                console.log("status = " + status);
+                console.log("xhr = " + xhr);
+                $("#before").append(msg);
+                var after = JSON.parse(msg);
+                $.each(after, function (index, value) {
+                    for (key in value) {
+                        $("#after").append("キー： " + key + "　　　値 : " + value[key] + "<br>")
+                    }
+                    $("#after").append("<hr>")
+                });
+            })
+            .fail(function (xhr, status, error) {
+                console.log("error");
+            })
+            .always(function (xhr, status) {
+                console.log("fin");
+            });
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>REST</title>
+    <script src="../js/jquery-3.3.1.min.js"></script>
+</head>
+
+<body>
+    <h1>JSON12GET (javascript)</h1>
+    <button>GET</button>
+
+    <hr>
+
+    <p>JSON.parse前：</p>
+    <div id="before"></div>
+
+    <hr>
+
+    <p>JSON.parse後：</p>
+    <div id="after"></div>
+</body>
+<script>
+
+    $("button").click(function () {
+        $("#after").empty();
+        $("#before").empty();
+
+        $.ajax({
+            url: "../../json12",
+            type: "GET",
+            contentType: "Content-Type: application/json; charset=UTF-8",
+        })
+            .done(function (msg, status, xhr) {
+                console.log("success");
+                console.log("msg = " + msg);
+                console.log("status = " + status);
+                console.log("xhr = " + xhr);
+                $("#before").append(msg);
+                var after = JSON.parse(msg);
+                $.each(after, function (index, value) {
+                    for (key in value) {
+                        $("#after").append("キー： " + key + "　　　値 : " + value[key] + "<br>")
+                    }
+                    $("#after").append("<hr>")
+                });
+            })
+            .fail(function (xhr, status, error) {
+                console.log("error");
+            })
+            .always(function (xhr, status) {
+                console.log("fin");
+            });
+    });
+
+</script>
+
+</html>
